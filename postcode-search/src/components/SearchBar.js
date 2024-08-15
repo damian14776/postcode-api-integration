@@ -1,31 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import usePostcodeSearch from '../hooks/useSearch'; 
 
 // SearchBar component allows users to input a postcode and initiate a search
 const SearchBar = ({ onSearch }) => {
-  // State to hold the value of the postcode input
-  const [postcode, setPostcode] = useState('');
-  // State to handle validation error
-  const [error, setError] = useState('');
-
-  // Function to validate postcode format
-  const validatePostcode = (postcode) => {
-    // Simple regex to match common UK postcode formats
-    const postcodeRegex = /^([A-Z]{1,2}[0-9][A-Z0-9]?|[A-Z][0-9]{2}|[A-Z]{2}[0-9]{2})[ ]?[0-9][A-Z]{2}$/i;
-    return postcodeRegex.test(postcode);
-  };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-
-    // Validate postcode format
-    if (validatePostcode(postcode)) {
-      setError(''); // Clear any previous errors
-      onSearch(postcode); // Call the onSearch function passed as a prop with the current postcode
-    } else {
-      setError('Please enter a valid postcode'); // Set validation error message
-    }
-  };
+  // Use the custom hook to manage postcode search logic
+  const { postcode, error, handleSubmit, handleChange } = usePostcodeSearch(onSearch);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center w-full max-w-sm">
@@ -33,7 +12,7 @@ const SearchBar = ({ onSearch }) => {
       <input
         type="text"
         value={postcode} // Bind the input value to the postcode state
-        onChange={(e) => setPostcode(e.target.value)} // Update the postcode state on input change
+        onChange={handleChange} // Update the postcode state on input change
         placeholder="Enter postcode" // Placeholder text for the input
         className={`border p-2 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 ${error ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500`}
       />
